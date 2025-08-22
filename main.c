@@ -334,7 +334,7 @@ byte* getDerivative(byte* code) {
 
     sder:
         byte* single_derivative = derivatives[code[i] - 7][variable];
-        int single_derivative_length = codeLength(single_derivative) - 1;
+        int single_derivative_length = codeLength(single_derivative);
 
     if (!single_derivative_length) {
         variable = 0;
@@ -345,8 +345,8 @@ byte* getDerivative(byte* code) {
 
     memcpy(derivative, code, i);
     memcpy(derivative + i, single_derivative, single_derivative_length);
-    memcpy(derivative + i + single_derivative_length, code + i + 1, codeLength(code) - i - 1);
-
+    memcpy(derivative + i + single_derivative_length, code + i + 1, codeLength(code) - i);
+    
     VM.stack_ptr = VM.stack;
 
     return derivative;
@@ -362,7 +362,8 @@ int main(void) {
     execute(prepare);
 
     byte* derivative = getDerivative(code);
-
+    
+    execute(prepare);
     execute(derivative);
 
     printf("%f\n", VM.result);
